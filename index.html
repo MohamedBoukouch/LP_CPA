@@ -354,8 +354,7 @@
 <nav>
   <div class="logo" onclick="showPage('home')">✨ SparkConnect</div>
   <div class="nav-links" id="nav-links">
-    <button class="nav-btn outline" onclick="showPage('login')">Login</button>
-    <button class="nav-btn solid" onclick="showPage('register')">Join Free</button>
+    <button class="nav-btn solid" onclick="window.open('https://t.crdtg2.com/401940/5611?bo=2753,2754,2755,2756&aff_sub5=SF_006OG000004lmDN', '_blank')">Join Free</button>
   </div>
 </nav>
 
@@ -368,8 +367,8 @@
       <h1>Meet Real People.<br>Make <span>Real</span> Connections.</h1>
       <p>SparkConnect is the easiest way to discover, match, and chat with people who share your vibe. Swipe, spark, and meet — all in one place.</p>
       <div class="hero-cta">
-        <button class="btn-primary" onclick="showPage('register')">Create Free Profile ✨</button>
-        <button class="btn-ghost" onclick="showPage('login')">I Have an Account</button>
+        <button class="btn-primary" onclick="window.open('https://t.crdtg2.com/401940/5611?bo=2753,2754,2755,2756&aff_sub5=SF_006OG000004lmDN', '_blank')">Create Free Profile ✨</button>
+        <button class="btn-ghost" onclick="window.open('https://t.crdtg2.com/401940/5611?bo=2753,2754,2755,2756&aff_sub5=SF_006OG000004lmDN', '_blank')">I Have an Account</button>
       </div>
       <div class="hero-avatars">
         <img class="av-img" src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=80&h=80&fit=crop&crop=face&auto=format" alt="">
@@ -384,18 +383,18 @@
     <div class="hero-right">
       <div class="hero-mosaic">
         <div class="mosaic-img mosaic-main">
-          <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=520&h=700&fit=crop&crop=face&auto=format" alt="happy girl">
+          <img src="https://res.cloudinary.com/ds9v1rpfi/image/upload/v1774438929/ChatGPT_Image_25_mars_2026_%C3%A0_04_41_59_ou8djf.png" alt="happy girl">
         </div>
-        <div class="mosaic-img mosaic-tert">
+        <!-- <div class="mosaic-img mosaic-tert">
           <img src="https://images.unsplash.com/photo-1524503033411-c9566986fc8f?w=296&h=376&fit=crop&crop=face&auto=format" alt="smiling woman">
         </div>
         <div class="mosaic-img mosaic-sec">
           <img src="https://images.unsplash.com/photo-1488716820095-cbe80883c496?w=370&h=490&fit=crop&crop=face&auto=format" alt="woman with phone">
-        </div>
-        <div class="hero-bubble b1">
+        </div> -->
+        <!-- <div class="hero-bubble b1">
           <div class="bubble-icon">💘</div>
           <div class="bubble-text"><strong>New Match!</strong><span>Sofia liked you</span></div>
-        </div>
+        </div> -->
         <div class="hero-bubble b2">
           <div class="bubble-icon">💬</div>
           <div class="bubble-text"><strong>98 Messages</strong><span>Today</span></div>
@@ -429,7 +428,7 @@
     <h2 class="section-title">People online right now</h2>
     <div class="profiles-grid" id="home-profiles"></div>
     <div style="text-align:center;margin-top:34px;">
-      <button class="btn-primary" onclick="showPage('register')">See All Members →</button>
+      <button class="btn-primary" onclick="window.open('https://t.crdtg2.com/401940/5611?bo=2753,2754,2755,2756&aff_sub5=SF_006OG000004lmDN', '_blank')">See All Members →</button>
     </div>
   </section>
 
@@ -594,10 +593,10 @@
 
       <h2>Welcome back 👋</h2>
       <p class="subtitle">Log in to see your matches</p>
-      <div class="social-login">
+      <!-- <div class="social-login">
         <button class="social-btn" onclick="doLogin()">🌐 Google</button>
         <button class="social-btn" onclick="doLogin()">📘 Facebook</button>
-      </div>
+      </div> -->
       <div class="divider"><span>or continue with email</span></div>
       <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="login-email" type="email" value="demo@sparkconnect.com"></div>
       <div class="form-group"><label class="form-label">Password</label><input class="form-input" id="login-password" type="password" value="demo1234"></div>
@@ -847,7 +846,7 @@ function showPage(p){
   if(p==='app'){
     document.getElementById('nav-links').innerHTML=`<button class="nav-btn outline" onclick="showPanel('messages')">💬 Messages</button><button class="nav-btn solid" onclick="showPanel('discover')">🔥 Discover</button>`;
   } else {
-    document.getElementById('nav-links').innerHTML=`<button class="nav-btn outline" onclick="showPage('login')">Login</button><button class="nav-btn solid" onclick="showPage('register')">Join Free</button>`;
+    document.getElementById('nav-links').innerHTML=`<button class="nav-btn solid" onclick="window.open('https://t.crdtg2.com/401940/5611?bo=2753,2754,2755,2756&aff_sub5=SF_006OG000004lmDN', '_blank')">Join Free</button>`;
   }
 }
 
