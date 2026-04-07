@@ -1,707 +1,277 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SparkConnect — Meet New People</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:wght@700;900&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #f0f5ff;
-    --white: #ffffff;
-    --surface: #e8efff;
-    --card: #ffffff;
-    --border: #d4e0ff;
-    --accent: #2563eb;
-    --accent2: #4f80f7;
-    --accentlt: #eff4ff;
-    --accentmd: #c7d9ff;
-    --text: #0f172a;
-    --muted: #64748b;
-    --green: #10b981;
-    --pink: #ec4899;
-    --red: #ef4444;
-    --radius: 18px;
-    --shadow: 0 4px 24px rgba(37,99,235,.10);
-    --shadow-lg: 0 12px 48px rgba(37,99,235,.16);
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
-
-  /* NAV */
-  nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:14px 40px;background:rgba(255,255,255,.94);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:0 2px 16px rgba(37,99,235,.07);}
-  .logo{font-family:'Fraunces',serif;font-size:1.55rem;font-weight:900;background:linear-gradient(135deg,#2563eb,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer;letter-spacing:-.02em;}
-  .nav-links{display:flex;gap:10px;align-items:center;}
-  .nav-btn{padding:10px 22px;border-radius:50px;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:all .25s;}
-  .nav-btn.outline{background:transparent;border:1.5px solid var(--border);color:var(--text);}
-  .nav-btn.outline:hover{border-color:var(--accent);color:var(--accent);background:var(--accentlt);}
-  .nav-btn.solid{background:linear-gradient(135deg,#2563eb,#6366f1);color:#fff;box-shadow:0 4px 14px rgba(37,99,235,.3);}
-  .nav-btn.solid:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,99,235,.4);}
-
-  /* PAGES */
-  .page{display:none;min-height:100vh;padding-top:70px;}
-  .page.active{display:block;}
-
-  /* HERO */
-  #page-home{background:var(--bg);}
-
-  .hero{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    align-items:stretch;
-    gap:0;
-    max-width:1160px;
-    margin:0 auto;
-    padding:72px 40px 64px;
-  }
-
-  @media(max-width:860px){
-    .hero{grid-template-columns:1fr;text-align:center;}
-    .hero-right{order:-1;height:380px;}
-    .hero-cta{justify-content:center;}
-    .hero-avatars{justify-content:center;}
-  }
-
-  .hero-left{
-    animation:fadeUp .7s ease both;
-    padding-right:52px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-  }
-
-  .hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--accentlt);border:1px solid var(--accentmd);color:var(--accent);padding:7px 16px;border-radius:50px;font-size:.76rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:26px;}
-  .hero h1{font-family:'Fraunces',serif;font-size:clamp(2.5rem,5vw,4.3rem);font-weight:900;line-height:1.08;letter-spacing:-.03em;margin-bottom:20px;color:var(--text);}
-  .hero h1 span{background:linear-gradient(135deg,#2563eb,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-  .hero p{font-size:1.05rem;color:var(--muted);line-height:1.75;margin-bottom:34px;max-width:500px;}
-  .hero-cta{display:flex;gap:12px;flex-wrap:wrap;}
-  .btn-primary{padding:15px 32px;border-radius:50px;border:none;background:linear-gradient(135deg,#2563eb,#6366f1);color:#fff;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .3s;font-family:'Plus Jakarta Sans',sans-serif;box-shadow:0 4px 20px rgba(37,99,235,.35);}
-  .btn-primary:hover{transform:translateY(-3px);box-shadow:0 10px 32px rgba(37,99,235,.45);}
-  .btn-ghost{padding:15px 32px;border-radius:50px;background:var(--white);border:1.5px solid var(--border);color:var(--text);font-size:.95rem;font-weight:600;cursor:pointer;transition:all .3s;font-family:'Plus Jakarta Sans',sans-serif;}
-  .btn-ghost:hover{border-color:var(--accent);color:var(--accent);background:var(--accentlt);}
-  .hero-avatars{display:flex;align-items:center;margin-top:38px;}
-  .av-img{width:44px;height:44px;border-radius:50%;border:3px solid var(--white);margin-left:-10px;overflow:hidden;object-fit:cover;background:var(--accentmd);flex-shrink:0;}
-  .av-img:first-child{margin-left:0;}
-  .hero-count{margin-left:14px;}
-  .hero-count strong{font-size:1rem;font-weight:800;display:block;}
-  .hero-count span{font-size:.76rem;color:var(--muted);}
-
-  /* =============================================
-     HERO RIGHT — FULL HEIGHT IMAGE FIX
-     ============================================= */
-  .hero-right{
-    position:relative;
-    animation:fadeUp .7s .15s ease both;
-    min-height:520px;
-    border-radius:28px;
-    overflow:hidden;
-    box-shadow:var(--shadow-lg);
-  }
-
-  .hero-right img.hero-main-img{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    object-position:center top;
-    display:block;
-    border-radius:28px;
-  }
-
-  /* gradient overlay at bottom for bubble legibility */
-  .hero-right::after{
-    content:'';
-    position:absolute;
-    bottom:0;left:0;right:0;
-    height:160px;
-    background:linear-gradient(to top,rgba(15,23,42,.55),transparent);
-    border-radius:0 0 28px 28px;
-    pointer-events:none;
-  }
-
-  /* bubble floats over the image */
-  .hero-bubble{
-    position:absolute;
-    background:var(--white);
-    border-radius:16px;
-    padding:11px 15px;
-    box-shadow:var(--shadow-lg);
-    z-index:10;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    min-width:155px;
-    animation:float 3s ease-in-out infinite;
-    border:1px solid var(--border);
-  }
-  .hero-bubble.b2{bottom:24px;left:20px;animation-delay:.8s;}
-  .bubble-icon{font-size:1.4rem;}
-  .bubble-text strong{font-size:.8rem;font-weight:700;display:block;}
-  .bubble-text span{font-size:.7rem;color:var(--muted);}
-
-  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-
-  /* Stats */
-  .stats-row{display:flex;justify-content:center;flex-wrap:wrap;max-width:900px;margin:0 auto;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:40px 24px;}
-  .stat{text-align:center;padding:0 36px;border-right:1px solid var(--border);}
-  .stat:last-child{border-right:none;}
-  .stat strong{display:block;font-family:'Fraunces',serif;font-size:2.2rem;color:var(--accent);}
-  .stat span{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600;}
-
-  /* Features */
-  .features{padding:80px 40px;max-width:1100px;margin:0 auto;}
-  .section-label{text-align:center;font-size:.74rem;color:var(--accent);text-transform:uppercase;letter-spacing:.14em;font-weight:700;margin-bottom:12px;}
-  .section-title{font-family:'Fraunces',serif;font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:700;text-align:center;margin-bottom:50px;letter-spacing:-.02em;}
-  .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;}
-  .feature-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:30px;transition:all .3s;box-shadow:0 2px 10px rgba(37,99,235,.04);}
-  .feature-card:hover{border-color:var(--accentmd);transform:translateY(-4px);box-shadow:var(--shadow-lg);}
-  .feature-icon{width:50px;height:50px;border-radius:14px;background:var(--accentlt);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:16px;}
-  .feature-card h3{font-size:1rem;font-weight:700;margin-bottom:9px;}
-  .feature-card p{font-size:.86rem;color:var(--muted);line-height:1.7;}
-
-  /* Profiles */
-  .profiles-section{padding:60px 40px;max-width:1100px;margin:0 auto;}
-  .profiles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(182px,1fr));gap:18px;}
-  .profile-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .3s;cursor:pointer;box-shadow:0 2px 8px rgba(37,99,235,.05);}
-  .profile-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:var(--accentmd);}
-  .profile-img{width:100%;aspect-ratio:3/4;background:var(--accentmd);position:relative;overflow:hidden;}
-  .profile-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s;}
-  .profile-card:hover .profile-img img{transform:scale(1.06);}
-  .profile-online{position:absolute;top:10px;right:10px;width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(16,185,129,.25);}
-  .profile-info{padding:13px;}
-  .profile-name{font-weight:700;font-size:.9rem;margin-bottom:2px;}
-  .profile-meta{font-size:.74rem;color:var(--muted);}
-  .profile-tag{display:inline-block;background:var(--accentlt);color:var(--accent);border-radius:20px;padding:3px 9px;font-size:.68rem;font-weight:700;margin-top:7px;}
-
-  footer{text-align:center;padding:44px 24px;border-top:1px solid var(--border);color:var(--muted);font-size:.8rem;background:var(--white);}
-
-  /* REGISTER */
-  #page-register{background:var(--bg);}
-  .register-wrap{max-width:540px;margin:0 auto;padding:60px 24px;}
-  .steps-indicator{display:flex;align-items:center;justify-content:center;margin-bottom:44px;}
-  .step-dot{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.88rem;transition:all .4s;border:2px solid var(--border);color:var(--muted);background:var(--white);}
-  .step-dot.active{background:linear-gradient(135deg,#2563eb,#6366f1);border-color:transparent;color:#fff;box-shadow:0 0 20px rgba(37,99,235,.35);}
-  .step-dot.done{background:var(--green);border-color:transparent;color:#fff;}
-  .step-line{flex:1;height:2px;background:var(--border);max-width:80px;transition:background .4s;}
-  .step-line.done{background:var(--green);}
-  .step-form{display:none;animation:fadeUp .4s ease;}
-  .step-form.active{display:block;}
-  .step-title{font-family:'Fraunces',serif;font-size:2rem;font-weight:700;margin-bottom:8px;text-align:center;letter-spacing:-.02em;}
-  .step-subtitle{color:var(--muted);text-align:center;margin-bottom:34px;font-size:.92rem;}
-  .form-group{margin-bottom:17px;}
-  .form-label{display:block;font-size:.8rem;font-weight:700;margin-bottom:6px;color:var(--text);}
-  .form-input{width:100%;padding:13px 16px;border-radius:12px;background:var(--white);border:1.5px solid var(--border);color:var(--text);font-size:.92rem;font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:all .25s;box-shadow:0 1px 4px rgba(37,99,235,.04);}
-  .form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.12);}
-  .form-input.error{border-color:var(--red)!important;box-shadow:0 0 0 3px rgba(239,68,68,.12)!important;}
-  .form-input::placeholder{color:#b0bcd4;}
-  .field-error{font-size:.75rem;color:var(--red);margin-top:5px;font-weight:600;display:none;}
-  .field-error.show{display:block;}
-  .gender-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-  .gender-btn{padding:13px 8px;border-radius:12px;background:var(--white);border:1.5px solid var(--border);color:var(--text);cursor:pointer;transition:all .25s;text-align:center;font-family:'Plus Jakarta Sans',sans-serif;font-size:.86rem;font-weight:600;}
-  .gender-btn .g-icon{font-size:1.5rem;display:block;margin-bottom:4px;}
-  .gender-btn.selected,.gender-btn:hover{border-color:var(--accent);background:var(--accentlt);color:var(--accent);}
-  .interest-tags{display:flex;flex-wrap:wrap;gap:8px;}
-  .i-tag{padding:8px 15px;border-radius:50px;background:var(--white);border:1.5px solid var(--border);color:var(--muted);cursor:pointer;transition:all .25s;font-size:.83rem;font-weight:600;}
-  .i-tag.selected{background:var(--accentlt);border-color:var(--accent);color:var(--accent);}
-  .photo-upload-area{border:2px dashed var(--border);border-radius:var(--radius);padding:42px 24px;text-align:center;cursor:pointer;transition:all .3s;background:var(--white);}
-  .photo-upload-area:hover{border-color:var(--accent);background:var(--accentlt);}
-  .photo-upload-area .upload-icon{font-size:2.6rem;margin-bottom:10px;}
-  .photo-upload-area p{color:var(--muted);font-size:.86rem;}
-  .photo-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:13px;}
-  .photo-slot{aspect-ratio:1;border-radius:12px;background:var(--surface);border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:1.1rem;cursor:pointer;transition:all .25s;overflow:hidden;color:var(--muted);font-weight:600;position:relative;}
-  .photo-slot:hover{border-color:var(--accent);background:var(--accentlt);color:var(--accent);}
-  .photo-slot.filled{border-style:solid;border-color:var(--green);background:#ecfdf5;}
-  .photo-slot.filled img{width:100%;height:100%;object-fit:cover;display:block;}
-  .photo-slot .remove-btn{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(239,68,68,.85);color:#fff;border:none;cursor:pointer;font-size:.7rem;display:none;align-items:center;justify-content:center;font-weight:700;}
-  .photo-slot.filled .remove-btn{display:flex;}
-  .hidden-file{display:none;}
-  .form-next-btn{width:100%;padding:15px;border-radius:12px;border:none;background:linear-gradient(135deg,#2563eb,#6366f1);color:#fff;font-size:.95rem;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;margin-top:22px;transition:all .3s;box-shadow:0 4px 16px rgba(37,99,235,.3);}
-  .form-next-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(37,99,235,.4);}
-
-  /* LOGIN */
-  #page-login{background:var(--bg);}
-  .login-wrap{max-width:430px;margin:0 auto;padding:72px 24px;}
-  .login-card{background:var(--white);border:1.5px solid var(--border);border-radius:24px;padding:46px 38px;box-shadow:var(--shadow-lg);}
-  .login-card h2{font-family:'Fraunces',serif;font-size:2rem;text-align:center;margin-bottom:6px;}
-  .login-card .subtitle{color:var(--muted);text-align:center;margin-bottom:30px;font-size:.92rem;}
-  .divider{display:flex;align-items:center;gap:12px;margin:20px 0;}
-  .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
-  .divider span{color:var(--muted);font-size:.78rem;font-weight:600;}
-  .social-login{display:flex;gap:10px;}
-  .social-btn{flex:1;padding:12px;border-radius:12px;background:var(--surface);border:1.5px solid var(--border);color:var(--text);font-size:.86rem;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:7px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;}
-  .social-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accentlt);}
-  .verify-banner{background:linear-gradient(135deg,#fef3c7,#fde68a);border:1.5px solid #f59e0b;border-radius:16px;padding:18px 20px;margin-bottom:24px;display:flex;align-items:flex-start;gap:12px;}
-  .verify-banner .v-icon{font-size:1.6rem;flex-shrink:0;margin-top:1px;}
-  .verify-banner h4{font-size:.9rem;font-weight:700;color:#92400e;margin-bottom:3px;}
-  .verify-banner p{font-size:.78rem;color:#b45309;line-height:1.5;}
-  .verify-banner a{color:#d97706;font-weight:700;cursor:pointer;text-decoration:underline;}
-
-  /* APP */
-  #page-app{background:var(--bg);}
-  .app-layout{display:flex;min-height:calc(100vh - 70px);}
-  .sidebar{width:265px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 13px;position:sticky;top:70px;height:calc(100vh - 70px);overflow-y:auto;}
-  .sidebar-user{display:flex;align-items:center;gap:12px;padding:14px;background:var(--accentlt);border-radius:14px;margin-bottom:20px;border:1px solid var(--accentmd);}
-  .sidebar-avatar{width:44px;height:44px;border-radius:50%;overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,#2563eb,#6366f1);display:flex;align-items:center;justify-content:center;font-size:1.3rem;}
-  .sidebar-user-info strong{display:block;font-size:.9rem;font-weight:700;}
-  .sidebar-user-info span{font-size:.72rem;color:var(--green);font-weight:600;}
-  .sidebar-nav{display:flex;flex-direction:column;gap:3px;flex:1;}
-  .sidebar-item{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:12px;cursor:pointer;color:var(--muted);font-size:.86rem;font-weight:600;transition:all .2s;}
-  .sidebar-item:hover{background:var(--surface);color:var(--text);}
-  .sidebar-item.active{background:var(--accentlt);color:var(--accent);}
-  .sidebar-item .s-icon{font-size:1.05rem;width:20px;text-align:center;}
-  .sidebar-badge{margin-left:auto;background:var(--accent);color:#fff;font-size:.64rem;font-weight:700;padding:2px 6px;border-radius:10px;}
-  .app-main{flex:1;overflow-y:auto;}
-  .app-panel{display:none;padding:28px;}
-  .app-panel.active{display:block;}
-  .discover-header{margin-bottom:24px;}
-  .discover-header h2{font-family:'Fraunces',serif;font-size:1.65rem;letter-spacing:-.02em;}
-  .discover-header p{color:var(--muted);font-size:.86rem;margin-top:3px;}
-  .swipe-area{display:flex;justify-content:center;align-items:flex-start;gap:26px;flex-wrap:wrap;}
-  .swipe-card-container{position:relative;width:305px;height:445px;flex-shrink:0;}
-  .swipe-card{position:absolute;inset:0;background:var(--white);border:1.5px solid var(--border);border-radius:22px;overflow:hidden;cursor:grab;transition:transform .3s,opacity .3s;box-shadow:var(--shadow-lg);}
-  .swipe-card:nth-child(2){transform:rotate(-3deg) translateY(8px) scale(.97);z-index:1;}
-  .swipe-card:nth-child(3){transform:rotate(2deg) translateY(16px) scale(.94);z-index:0;}
-  .swipe-card:first-child{z-index:3;}
-  .card-img{width:100%;height:295px;position:relative;overflow:hidden;background:var(--accentmd);}
-  .card-img img{width:100%;height:100%;object-fit:cover;display:block;}
-  .card-gradient{position:absolute;bottom:0;left:0;right:0;height:110px;background:linear-gradient(to top,rgba(0,0,0,.72),transparent);}
-  .card-body{padding:13px 17px 17px;}
-  .card-name{font-size:1.15rem;font-weight:700;font-family:'Fraunces',serif;}
-  .card-age{color:var(--muted);font-size:.83rem;margin-bottom:7px;}
-  .card-tags{display:flex;gap:5px;flex-wrap:wrap;}
-  .card-tag{background:var(--accentlt);border-radius:20px;padding:3px 9px;font-size:.7rem;color:var(--accent);font-weight:600;}
-  .swipe-actions{display:flex;justify-content:center;gap:14px;margin-top:20px;}
-  .swipe-btn{width:56px;height:56px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;font-size:1.4rem;cursor:pointer;transition:all .3s;}
-  .swipe-btn.pass{background:var(--white);border:2px solid var(--border);box-shadow:0 2px 10px rgba(0,0,0,.07);}
-  .swipe-btn.pass:hover{border-color:#ef4444;transform:scale(1.1);}
-  .swipe-btn.like{background:linear-gradient(135deg,#2563eb,#6366f1);box-shadow:0 4px 18px rgba(37,99,235,.4);}
-  .swipe-btn.like:hover{transform:scale(1.1);box-shadow:0 8px 26px rgba(37,99,235,.5);}
-  .swipe-btn.super{background:linear-gradient(135deg,#f59e0b,#ef4444);box-shadow:0 4px 16px rgba(245,158,11,.35);}
-  .swipe-btn.super:hover{transform:scale(1.1);}
-  .filters-panel{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;width:265px;flex-shrink:0;height:fit-content;box-shadow:0 2px 10px rgba(37,99,235,.05);}
-  .filters-panel h3{font-size:.93rem;font-weight:700;margin-bottom:16px;}
-  .filter-group{margin-bottom:16px;}
-  .filter-label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:700;margin-bottom:7px;}
-  .range-input{width:100%;accent-color:var(--accent);cursor:pointer;}
-  .range-val{text-align:right;font-size:.8rem;color:var(--accent);font-weight:700;margin-top:2px;}
-  .messages-layout{display:flex;height:calc(100vh - 135px);}
-  .convo-list{width:295px;flex-shrink:0;border-right:1px solid var(--border);overflow-y:auto;background:var(--white);}
-  .convo-search{padding:13px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--white);z-index:1;}
-  .convo-search input{width:100%;padding:9px 13px;border-radius:50px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:.86rem;outline:none;}
-  .convo-item{display:flex;align-items:center;gap:11px;padding:12px 13px;cursor:pointer;transition:background .2s;border-bottom:1px solid rgba(0,0,0,.03);}
-  .convo-item:hover,.convo-item.active{background:var(--accentlt);}
-  .convo-avatar{width:44px;height:44px;border-radius:50%;flex-shrink:0;overflow:hidden;background:var(--accentmd);position:relative;}
-  .convo-avatar img{width:100%;height:100%;object-fit:cover;}
-  .convo-online{position:absolute;bottom:1px;right:1px;width:11px;height:11px;border-radius:50%;background:var(--green);border:2px solid var(--white);}
-  .convo-info{flex:1;min-width:0;}
-  .convo-name{font-weight:700;font-size:.86rem;margin-bottom:2px;}
-  .convo-preview{font-size:.76rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .convo-time{font-size:.68rem;color:var(--muted);flex-shrink:0;font-weight:600;}
-  .chat-area{flex:1;display:flex;flex-direction:column;background:var(--bg);}
-  .chat-header{display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:1px solid var(--border);background:var(--white);}
-  .chat-header-avatar{width:40px;height:40px;border-radius:50%;overflow:hidden;background:var(--accentmd);}
-  .chat-header-avatar img{width:100%;height:100%;object-fit:cover;}
-  .chat-header-info strong{font-weight:700;font-size:.9rem;}
-  .chat-header-info span{font-size:.74rem;color:var(--green);display:block;font-weight:600;}
-  .chat-header-actions{margin-left:auto;display:flex;gap:7px;}
-  .chat-action-btn{width:35px;height:35px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:.9rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;}
-  .chat-action-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accentlt);}
-  .chat-messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:13px;}
-  .msg{display:flex;gap:8px;max-width:72%;}
-  .msg.me{flex-direction:row-reverse;margin-left:auto;}
-  .msg-avatar{width:30px;height:30px;border-radius:50%;flex-shrink:0;overflow:hidden;background:var(--accentmd);}
-  .msg-avatar img{width:100%;height:100%;object-fit:cover;}
-  .msg-bubble{background:var(--white);border:1.5px solid var(--border);padding:11px 14px;border-radius:18px;font-size:.86rem;line-height:1.55;box-shadow:0 1px 5px rgba(0,0,0,.05);}
-  .msg.me .msg-bubble{background:linear-gradient(135deg,#2563eb,#6366f1);border-color:transparent;color:#fff;}
-  .msg-time{font-size:.66rem;color:var(--muted);margin-top:3px;text-align:right;}
-  .msg.me .msg-time{text-align:left;}
-  .chat-input-area{padding:13px 18px;border-top:1px solid var(--border);display:flex;align-items:center;gap:9px;background:var(--white);}
-  .chat-input{flex:1;padding:11px 15px;border-radius:50px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:.86rem;outline:none;transition:border-color .2s;}
-  .chat-input:focus{border-color:var(--accent);}
-  .chat-send-btn{width:40px;height:40px;border-radius:50%;border:none;background:linear-gradient(135deg,#2563eb,#6366f1);color:#fff;font-size:1.05rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 12px rgba(37,99,235,.35);}
-  .chat-send-btn:hover{transform:scale(1.1);}
-  .matches-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:17px;}
-  .match-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .3s;cursor:pointer;box-shadow:0 2px 9px rgba(37,99,235,.05);}
-  .match-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--accentmd);}
-  .match-img{width:100%;height:188px;overflow:hidden;position:relative;background:var(--accentmd);}
-  .match-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s;}
-  .match-card:hover .match-img img{transform:scale(1.05);}
-  .match-badge{position:absolute;top:10px;left:10px;background:linear-gradient(135deg,var(--pink),#f59e0b);color:#fff;border-radius:20px;padding:3px 9px;font-size:.68rem;font-weight:700;}
-  .match-info{padding:13px;}
-  .match-name{font-weight:700;margin-bottom:2px;font-size:.9rem;}
-  .match-sub{font-size:.76rem;color:var(--muted);margin-bottom:9px;}
-  .match-actions{display:flex;gap:7px;}
-  .match-act-btn{flex:1;padding:8px;border-radius:10px;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:.76rem;font-weight:700;cursor:pointer;transition:all .2s;}
-  .match-act-btn.msg{background:linear-gradient(135deg,#2563eb,#6366f1);color:#fff;}
-  .match-act-btn.profile{background:var(--surface);color:var(--text);border:1px solid var(--border);}
-  .profile-view{max-width:760px;margin:0 auto;}
-  .profile-hero{display:flex;gap:30px;margin-bottom:32px;flex-wrap:wrap;}
-  .profile-big-img{width:225px;height:282px;border-radius:20px;flex-shrink:0;overflow:hidden;background:var(--accentmd);box-shadow:var(--shadow-lg);}
-  .profile-big-img img{width:100%;height:100%;object-fit:cover;}
-  .profile-details{flex:1;min-width:180px;}
-  .profile-details h2{font-family:'Fraunces',serif;font-size:1.9rem;font-weight:700;letter-spacing:-.02em;}
-  .profile-details .age{color:var(--muted);font-size:.93rem;margin-bottom:14px;}
-  .profile-stats-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
-  .p-stat{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:11px 15px;text-align:center;}
-  .p-stat strong{display:block;font-size:1.15rem;font-weight:800;color:var(--accent);}
-  .p-stat span{font-size:.7rem;color:var(--muted);font-weight:600;text-transform:uppercase;}
-  .profile-bio{color:var(--muted);line-height:1.8;margin-bottom:16px;font-size:.9rem;}
-  .profile-action-btns{display:flex;gap:9px;}
-  .p-act-btn{padding:12px 22px;border-radius:50px;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.88rem;transition:all .3s;}
-  .p-act-btn.like{background:linear-gradient(135deg,#2563eb,#6366f1);color:#fff;box-shadow:0 4px 14px rgba(37,99,235,.3);}
-  .p-act-btn.msg{background:var(--white);border:1.5px solid var(--border);color:var(--text);}
-  .p-act-btn:hover{transform:translateY(-2px);}
-  .settings-wrap{max-width:640px;}
-  .settings-section{margin-bottom:30px;}
-  .settings-section h3{font-size:.78rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;}
-  .settings-row{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;margin-bottom:7px;}
-  .settings-row-label strong{font-size:.86rem;font-weight:700;}
-  .settings-row-label span{font-size:.74rem;color:var(--muted);display:block;margin-top:2px;}
-  .toggle{position:relative;width:44px;height:24px;cursor:pointer;}
-  .toggle input{display:none;}
-  .toggle-track{width:100%;height:100%;border-radius:12px;background:var(--border);transition:.3s;display:block;}
-  .toggle input:checked+.toggle-track{background:var(--accent);}
-  .toggle-thumb{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.3s;pointer-events:none;box-shadow:0 1px 4px rgba(0,0,0,.2);}
-  .toggle input:checked~.toggle-thumb{left:22px;}
-  .toast{position:fixed;bottom:26px;right:26px;z-index:9999;background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:13px 17px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-lg);transform:translateY(80px);opacity:0;transition:all .4s;max-width:300px;}
-  .toast.show{transform:translateY(0);opacity:1;}
-  .toast-icon{font-size:1.3rem;}
-  .toast-text strong{display:block;font-size:.86rem;font-weight:700;}
-  .toast-text span{font-size:.76rem;color:var(--muted);}
-  .match-popup-overlay{position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:5000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.3s;backdrop-filter:blur(12px);}
-  .match-popup-overlay.show{opacity:1;pointer-events:all;}
-  .match-popup{background:var(--white);border:1.5px solid var(--border);border-radius:28px;padding:46px 38px;text-align:center;max-width:390px;width:90%;transform:scale(.85);transition:.35s;box-shadow:0 30px 80px rgba(37,99,235,.22);}
-  .match-popup-overlay.show .match-popup{transform:scale(1);}
-  .match-popup .pop-emoji{font-size:3.4rem;margin-bottom:13px;display:block;}
-  .match-popup h2{font-family:'Fraunces',serif;font-size:2rem;margin-bottom:6px;letter-spacing:-.02em;}
-  .match-popup h2 span{color:var(--accent);}
-  .match-popup p{color:var(--muted);margin-bottom:22px;font-size:.9rem;}
-  .match-popup-avatars{display:flex;justify-content:center;gap:14px;margin-bottom:24px;align-items:center;}
-  .pop-avatar{width:68px;height:68px;border-radius:50%;overflow:hidden;border:3px solid var(--white);box-shadow:var(--shadow);}
-  .pop-avatar img{width:100%;height:100%;object-fit:cover;}
-  .heart-between{font-size:1.7rem;animation:pulse 1s infinite;}
-  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.38)}}
-  .match-popup-btns{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-  ::-webkit-scrollbar{width:5px;}
-  ::-webkit-scrollbar-track{background:transparent;}
-  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
-  @media(max-width:768px){.sidebar{display:none;}.stat{padding:0 18px;}.logo{font-size:1.25rem;}nav{padding:12px 16px;}.hero-left{padding-right:0;}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>X7ero Games - Play Free Online Games | Action, Adventure, Puzzle & More</title>
+  <meta name="description" content="Play the best free online games at X7ero Games. Thousands of action, adventure, puzzle, racing, sports, and multiplayer games. No downloads required, play instantly in your browser!">
+  <meta name="keywords" content="free online games, browser games, action games, adventure games, puzzle games, racing games, sports games, multiplayer games, HTML5 games, mobile games, desktop games, play now, gaming portal">
+  <meta name="author" content="X7ero Games">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0C0D14">
+  <meta name="msapplication-TileColor" content="#6842FF">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://x7erogames.com/">
+  <meta property="og:title" content="X7ero Games - Play Free Online Games">
+  <meta property="og:description" content="Play thousands of free online games. Action, adventure, puzzle, racing, sports and more!">
+  <meta property="og:image" content="assets/logo.png">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://x7erogames.com/">
+  <meta property="twitter:title" content="X7ero Games - Play Free Online Games">
+  <meta property="twitter:description" content="Play thousands of free online games. Action, adventure, puzzle, racing, sports and more!">
+  <meta property="twitter:image" content="assets/logo.png">
+  
+  <!-- Canonical -->
+  <link rel="canonical" href="https://x7erogames.com/">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-<nav>
-  <div class="logo" onclick="showPage('home')">✨ SparkConnect</div>
-  <div class="nav-links" id="nav-links">
-    <button class="nav-btn solid" onclick="window.open('https://t.crdtg2.com/401940/5611?bo=2753,2754,2755,2756&aff_sub5=SF_006OG000004lmDN', '_blank')">Join Free</button>
-  </div>
-</nav>
-
-<!-- HOME -->
-<div class="page active" id="page-home">
-
-  <section class="hero">
-    <div class="hero-left">
-      <div class="hero-badge">🌍 2M+ Members Worldwide</div>
-      <h1>Meet New People.<br>Start <span>Chatting</span> Today.</h1>
-      <p>Create your free account and start discovering new connections near you!</p>
-      <div class="hero-cta">
-        <button class="btn-primary" onclick="window.open('https://t.crdtg2.com/401940/5611?bo=2753,2754,2755,2756&aff_sub5=SF_006OG000004lmDN', '_blank')">Create Free Profile ✨</button>
-        <button class="btn-ghost" onclick="window.open('https://t.crdtg2.com/401940/5611?bo=2753,2754,2755,2756&aff_sub5=SF_006OG000004lmDN', '_blank')">I Have an Account</button>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <!-- Mobile menu toggle -->
+        <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+          </svg>
+        </button>
+        <a href="/" class="logo">
+            <img src="assets/logo.png" alt="X7ero Games Logo" width="62" height="60">
+          <span>X7ero Games</span>
+        </a>
       </div>
-      <div class="hero-avatars">
-        <img class="av-img" src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=80&h=80&fit=crop&crop=face&auto=format" alt="">
-        <img class="av-img" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face&auto=format" alt="">
-        <img class="av-img" src="https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?w=80&h=80&fit=crop&crop=face&auto=format" alt="">
-        <img class="av-img" src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=80&h=80&fit=crop&crop=face&auto=format" alt="">
-        <img class="av-img" src="https://images.unsplash.com/photo-1488716820095-cbe80883c496?w=80&h=80&fit=crop&crop=face&auto=format" alt="">
-        <div class="hero-count"><strong>420K+</strong><span>Online Now</span></div>
+
+      <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search games..." class="search-input" autocomplete="off">
       </div>
-    </div>
 
-    <!-- ===================== HERO RIGHT (FIXED) ===================== -->
-    <div class="hero-right">
-      <img
-        class="hero-main-img"
-        src="https://res.cloudinary.com/ds9v1rpfi/image/upload/v1774438929/ChatGPT_Image_25_mars_2026_%C3%A0_04_41_59_ou8djf.png"
-        alt="happy girl"
-      >
-      <div class="hero-bubble b2">
-        <div class="bubble-icon">💬</div>
-        <div class="bubble-text"><strong>98 Messages</strong><span>Today</span></div>
+      <div class="header-right">
+        <button class="btn btn-text" id="myGamesBtn">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+          <span>My Games</span>
+          <span class="fav-count" id="headerFavCount">0</span>
+        </button>
       </div>
-    </div>
-    <!-- ============================================================== -->
-  </section>
+    </header>
 
-  <div class="stats-row">
-    <div class="stat"><strong>2.4M</strong><span>Active Members</span></div>
-    <div class="stat"><strong>98K</strong><span>New Matches/Day</span></div>
-    <div class="stat"><strong>4.8★</strong><span>App Rating</span></div>
-    <div class="stat"><strong>150+</strong><span>Countries</span></div>
-  </div>
+    <!-- Sidebar overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <section class="features">
-    <p class="section-label">Why SparkConnect</p>
-    <h2 class="section-title">Everything you need to connect</h2>
-    <div class="features-grid">
-      <div class="feature-card"><div class="feature-icon">🎯</div><h3>Smart Matching</h3><p>Our algorithm surfaces your most compatible matches first — by interests, location, and personality.</p></div>
-      <div class="feature-card"><div class="feature-icon">💬</div><h3>Real-Time Chat</h3><p>Instant messaging with read receipts, reactions, and media sharing. Never miss a moment.</p></div>
-      <div class="feature-card"><div class="feature-icon">📹</div><h3>Video Calls</h3><p>Meet face-to-face before meeting in person. HD video chat built right in.</p></div>
-      <div class="feature-card"><div class="feature-icon">🔒</div><h3>Verified Profiles</h3><p>Every profile goes through our 24/7 review team. Only real people, zero fakes.</p></div>
-      <div class="feature-card"><div class="feature-icon">🥷</div><h3>Incognito Mode</h3><p>Browse privately. Only people you match with can see your profile.</p></div>
-      <div class="feature-card"><div class="feature-icon">📍</div><h3>Local Discovery</h3><p>Find people near you or explore globally. Filter by distance, age, and more.</p></div>
-    </div>
-  </section>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-content">
+        <a href="#" class="nav-item active" data-category="all">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+          </div>
+          <span class="nav-label">Home</span>
+        </a>
 
-  <section class="profiles-section">
-    <p class="section-label">Active Members</p>
-    <h2 class="section-title">People online right now</h2>
-    <div class="profiles-grid" id="home-profiles"></div>
-    <div style="text-align:center;margin-top:34px;">
-      <button class="btn-primary" onclick="window.open('https://t.crdtg2.com/401940/5611?bo=2753,2754,2755,2756&aff_sub5=SF_006OG000004lmDN', '_blank')">See All Members →</button>
-    </div>
-  </section>
+        <a href="#" class="nav-item" data-category="action">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          </div>
+          <span class="nav-label">Action</span>
+        </a>
 
-  <footer>
-    <div class="logo" style="margin-bottom:12px;display:inline-block;">✨ SparkConnect</div><br>
-    &copy; 2026 SparkConnect — All rights reserved &nbsp;|&nbsp;
-    <span style="cursor:pointer;text-decoration:underline;">Privacy</span> &nbsp;|&nbsp;
-    <span style="cursor:pointer;text-decoration:underline;">Terms</span> &nbsp;|&nbsp;
-    <span style="cursor:pointer;text-decoration:underline;">Contact</span>
-  </footer>
-</div>
+        <a href="#" class="nav-item" data-category="adventure">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6H8l4-4 4 4h-3v6z"/></svg>
+          </div>
+          <span class="nav-label">Adventure</span>
+        </a>
 
-<!-- REGISTER -->
-<div class="page" id="page-register">
-  <div class="register-wrap">
-    <div class="steps-indicator">
-      <div class="step-dot active" id="dot-1">1</div>
-      <div class="step-line" id="line-1"></div>
-      <div class="step-dot" id="dot-2">2</div>
-      <div class="step-line" id="line-2"></div>
-      <div class="step-dot" id="dot-3">3</div>
-    </div>
-    <div class="step-form active" id="step-1">
-      <h2 class="step-title">Welcome! Let's start 👋</h2>
-      <p class="step-subtitle">Create your free account in 3 easy steps</p>
-      <div class="form-group"><label class="form-label">Email Address <span style="color:var(--red)">*</span></label><input class="form-input" id="reg-email" type="email" placeholder="you@email.com"><div class="field-error" id="err-email">Please enter a valid email address.</div></div>
-      <div class="form-group"><label class="form-label">Username <span style="color:var(--red)">*</span></label><input class="form-input" id="reg-username" type="text" placeholder="Choose a unique username"><div class="field-error" id="err-username">Username is required (min. 3 characters).</div></div>
-      <div class="form-group"><label class="form-label">Password <span style="color:var(--red)">*</span></label><input class="form-input" id="reg-password" type="password" placeholder="At least 8 characters"><div class="field-error" id="err-password">Password must be at least 8 characters.</div></div>
-      <div class="form-group"><label class="form-label">Date of Birth <span style="color:var(--red)">*</span></label><input class="form-input" id="reg-dob" type="date"><div class="field-error" id="err-dob">Please enter your date of birth. You must be 18+.</div></div>
-      <button class="form-next-btn" onclick="validateStep1()">Continue →</button>
-      <p style="text-align:center;margin-top:14px;font-size:.82rem;color:var(--muted);">Already have an account? <span style="color:var(--accent);cursor:pointer;font-weight:700;" onclick="showPage('login')">Log in</span></p>
-    </div>
-    <div class="step-form" id="step-2">
-      <h2 class="step-title">Tell us about you 🙌</h2>
-      <p class="step-subtitle">Help us find your best matches</p>
-      <div class="form-group"><label class="form-label">I am a... <span style="color:var(--red)">*</span></label><div class="gender-grid" id="gender-iam"><button class="gender-btn selected" onclick="selectGenderGroup('gender-iam',this)"><span class="g-icon">👨</span>Man</button><button class="gender-btn" onclick="selectGenderGroup('gender-iam',this)"><span class="g-icon">👩</span>Woman</button><button class="gender-btn" onclick="selectGenderGroup('gender-iam',this)"><span class="g-icon">🧑</span>Non-binary</button></div><div class="field-error" id="err-gender-iam">Please select your gender.</div></div>
-      <div class="form-group"><label class="form-label">Interested in... <span style="color:var(--red)">*</span></label><div class="gender-grid" id="gender-interest"><button class="gender-btn selected" onclick="selectGenderGroup('gender-interest',this)"><span class="g-icon">👨</span>Men</button><button class="gender-btn" onclick="selectGenderGroup('gender-interest',this)"><span class="g-icon">👩</span>Women</button><button class="gender-btn" onclick="selectGenderGroup('gender-interest',this)"><span class="g-icon">💫</span>Everyone</button></div><div class="field-error" id="err-gender-interest">Please select who you're interested in.</div></div>
-      <div class="form-group"><label class="form-label">Location <span style="color:var(--red)">*</span></label><input class="form-input" id="reg-location" type="text" placeholder="City or zip code"><div class="field-error" id="err-location">Please enter your location.</div></div>
-      <div class="form-group"><label class="form-label">Your Interests <span style="color:var(--red)">*</span> <span style="color:var(--muted);font-weight:400;">(pick at least 3)</span></label><div class="interest-tags" id="interest-tags-group"><span class="i-tag selected" onclick="toggleInterest(this)">🎵 Music</span><span class="i-tag" onclick="toggleInterest(this)">🎮 Gaming</span><span class="i-tag selected" onclick="toggleInterest(this)">🏃 Fitness</span><span class="i-tag" onclick="toggleInterest(this)">🍕 Foodie</span><span class="i-tag" onclick="toggleInterest(this)">✈️ Travel</span><span class="i-tag selected" onclick="toggleInterest(this)">📚 Books</span><span class="i-tag" onclick="toggleInterest(this)">🎨 Art</span><span class="i-tag" onclick="toggleInterest(this)">🌿 Nature</span><span class="i-tag" onclick="toggleInterest(this)">🍷 Wine</span><span class="i-tag" onclick="toggleInterest(this)">🐶 Pets</span><span class="i-tag" onclick="toggleInterest(this)">🎬 Movies</span><span class="i-tag" onclick="toggleInterest(this)">☕ Coffee</span></div><div class="field-error" id="err-interests">Please select at least 3 interests.</div></div>
-      <button class="form-next-btn" onclick="validateStep2()">Continue →</button>
-    </div>
-    <div class="step-form" id="step-3">
-      <h2 class="step-title">Add your photos 📸</h2>
-      <p class="step-subtitle">Profiles with photos get 10x more matches</p>
-      <div class="form-group"><label class="form-label">Profile Bio <span style="color:var(--red)">*</span></label><textarea class="form-input" id="reg-bio" rows="4" placeholder="Tell people a bit about yourself..." style="resize:none;"></textarea><div class="field-error" id="err-bio">Please write a short bio (min. 20 characters).</div></div>
-      <div class="form-group">
-        <label class="form-label">Photos <span style="color:var(--red)">*</span> <span style="color:var(--muted);font-weight:400;">(at least 1 required)</span></label>
-        <input type="file" class="hidden-file" id="file-1" accept="image/*" onchange="handleFileSelect(1, this)">
-        <input type="file" class="hidden-file" id="file-2" accept="image/*" onchange="handleFileSelect(2, this)">
-        <input type="file" class="hidden-file" id="file-3" accept="image/*" onchange="handleFileSelect(3, this)">
-        <div class="photo-upload-area" onclick="document.getElementById('file-1').click()"><div class="upload-icon">📷</div><p>Tap to upload your photo<br><small>JPG, PNG, WebP — up to 10MB each</small></p></div>
-        <div class="photo-preview" id="photo-preview">
-          <div class="photo-slot" id="slot-1" onclick="document.getElementById('file-1').click()"><span>+ Photo 1</span><button class="remove-btn" onclick="removePhoto(event,1)">✕</button></div>
-          <div class="photo-slot" id="slot-2" onclick="document.getElementById('file-2').click()"><span>+ Photo 2</span><button class="remove-btn" onclick="removePhoto(event,2)">✕</button></div>
-          <div class="photo-slot" id="slot-3" onclick="document.getElementById('file-3').click()"><span>+ Photo 3</span><button class="remove-btn" onclick="removePhoto(event,3)">✕</button></div>
-        </div>
-        <div class="field-error" id="err-photos">Please upload at least 1 photo.</div>
+        <a href="#" class="nav-item" data-category="puzzle">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7s2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5s-1.12-2.5-2.5-2.5z"/></svg>
+          </div>
+          <span class="nav-label">Puzzle</span>
+        </a>
+
+        <a href="#" class="nav-item" data-category="racing">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>
+          </div>
+          <span class="nav-label">Racing</span>
+        </a>
+
+        <a href="#" class="nav-item" data-category="sports">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+          </div>
+          <span class="nav-label">Sports</span>
+        </a>
+
+        <a href="#" class="nav-item" data-category="multiplayer">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          </div>
+          <span class="nav-label">Multiplayer</span>
+        </a>
+
+        <a href="#" class="nav-item" data-category="girls">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 1 0 10A5 5 0 0 1 12 2zm0 12c5.33 0 8 2.67 8 4v2H4v-2c0-1.33 2.67-4 8-4z"/></svg>
+          </div>
+          <span class="nav-label">Girls</span>
+        </a>
+
+        <a href="#" class="nav-item" data-category="simulation">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zM8 15c0-1.66 1.34-3 3-3 .35 0 .69.07 1 .18V6h5v2h-3v7.03A3.001 3.001 0 0 1 8 15z"/></svg>
+          </div>
+          <span class="nav-label">Simulation</span>
+        </a>
       </div>
-      <button class="form-next-btn" onclick="validateStep3()">🚀 Complete Profile!</button>
-    </div>
-  </div>
-</div>
 
-<!-- LOGIN -->
-<div class="page" id="page-login">
-  <div class="login-wrap">
-    <div class="login-card">
-      <div class="verify-banner" id="verify-banner" style="display:none;"><div class="v-icon">✉️</div><div><h4>Please verify your account first</h4><p>We sent a verification link to your email. Check your inbox and click the link to activate your account before logging in. <a onclick="showToast('📧','Email Resent','Check your inbox!')">Resend email</a></p></div></div>
-      <h2>Welcome back 👋</h2>
-      <p class="subtitle">Log in to see your matches</p>
-      <div class="divider"><span>or continue with email</span></div>
-      <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="login-email" type="email" value="demo@sparkconnect.com"></div>
-      <div class="form-group"><label class="form-label">Password</label><input class="form-input" id="login-password" type="password" value="demo1234"></div>
-      <button class="form-next-btn" onclick="doLogin()">Log In</button>
-      <p style="text-align:center;margin-top:16px;font-size:.82rem;color:var(--muted);">Don't have an account? <span style="color:var(--accent);cursor:pointer;font-weight:700;" onclick="showPage('register')">Sign up free</span></p>
-      <p style="text-align:center;margin-top:8px;font-size:.78rem;"><span style="color:var(--accent);cursor:pointer;font-weight:600;">Forgot password?</span></p>
-    </div>
-  </div>
-</div>
+      <div class="sidebar-footer">
+        <!-- Contact link with mailto - OMN for Oman -->
+        <a href="mailto:boukouch@example.com?subject=Contact%20from%20X7ero%20Games%20-%20OMN&body=Hello%2C%0A%0AI%20am%20contacting%20you%20from%20X7ero%20Games%20website%20regarding%3A%0A%0A%5BPlease%20describe%20your%20inquiry%20here%5D%0A%0ARegards%2C%0A%5BYour%20Name%5D%0A%5BOMN%5D" class="nav-item">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          </div>
+          <span class="nav-label">Contact</span>
+        </a>
+      </div>
+    </nav>
 
-<!-- APP -->
-<div class="page" id="page-app">
-  <div class="app-layout">
-    <aside class="sidebar">
-      <div class="sidebar-user"><div class="sidebar-avatar">😎</div><div class="sidebar-user-info"><strong>Alex_Spark</strong><span>● Online</span></div></div>
-      <nav class="sidebar-nav">
-        <div class="sidebar-item active" onclick="showPanel('discover')"><span class="s-icon">🔥</span> Discover</div>
-        <div class="sidebar-item" onclick="showPanel('matches')"><span class="s-icon">💘</span> My Matches <span class="sidebar-badge">12</span></div>
-        <div class="sidebar-item" onclick="showPanel('messages')"><span class="s-icon">💬</span> Messages <span class="sidebar-badge">4</span></div>
-        <div class="sidebar-item" onclick="showPanel('profile-view')"><span class="s-icon">👤</span> My Profile</div>
-        <div class="sidebar-item" onclick="showPanel('settings')"><span class="s-icon">⚙️</span> Settings</div>
-      </nav>
-      <div style="margin-top:auto;padding-top:13px;"><button onclick="showPage('home')" style="width:100%;padding:10px;border-radius:10px;background:transparent;border:1.5px solid var(--border);color:var(--muted);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;font-weight:600;">← Logout</button></div>
-    </aside>
-    <main class="app-main">
-      <div class="app-panel active" id="panel-discover">
-        <div class="discover-header"><h2>Discover 🔥</h2><p>People near you who match your vibe</p></div>
-        <div class="swipe-area">
-          <div>
-            <div class="swipe-card-container" id="swipe-deck"></div>
-            <div class="swipe-actions">
-              <button class="swipe-btn pass" onclick="swipePass()">✕</button>
-              <button class="swipe-btn super" onclick="swipeSuper()">⭐</button>
-              <button class="swipe-btn like" onclick="swipeLike()">❤️</button>
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- Hero / Game Player Section -->
+      <section class="hero-section" id="heroSection" style="display:none;">
+        <div class="game-player-wrapper" id="gamePlayerWrapper">
+          <div class="game-player-container">
+            <div class="game-frame-wrapper" id="gameFrameWrapper">
+              <!-- The embed iframe is injected here -->
+              
+              <div class="game-overlay" id="gameOverlay">
+                <button class="play-button" id="playButton">
+                  <svg viewBox="0 0 24 24" width="48" height="48" fill="currentColor">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                  <span>PLAY NOW</span>
+                </button>
+              </div>
+
+              <div id="gameEmbedContainer" class="game-embed-container"></div>
+
+              <!-- Fullscreen Button -->
+              <button class="fullscreen-btn" id="fullscreenBtn" title="Toggle Fullscreen">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" id="fullscreenIcon">
+                  <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+                </svg>
+              </button>
+            </div>
+
+            <div class="game-info-panel">
+              <div class="game-info-header">
+                <h1 id="currentGameTitle" class="game-title">Select a Game</h1>
+                <button class="favorite-btn" id="favoriteBtn" title="Add to Favorites">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" id="favIcon">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  </svg>
+                </button>
+              </div>
+              <div class="game-meta">
+                <span class="plays" id="currentGamePlays"></span>
+              </div>
+              <div class="game-tags" id="currentGameTags"></div>
+              <div class="game-platforms" id="currentGamePlatforms"></div>
             </div>
           </div>
-          <div class="filters-panel">
-            <h3>🎯 Filters</h3>
-            <div class="filter-group"><div class="filter-label">Age Range</div><input type="range" class="range-input" min="18" max="60" value="35" oninput="document.getElementById('age-val').textContent='18–'+this.value"><div class="range-val" id="age-val">18–35</div></div>
-            <div class="filter-group"><div class="filter-label">Distance</div><input type="range" class="range-input" min="5" max="200" value="50" oninput="document.getElementById('dist-val').textContent=this.value+'km'"><div class="range-val" id="dist-val">50km</div></div>
-            <div class="filter-group"><div class="filter-label">Looking for</div><select class="form-input" style="padding:9px 12px;"><option>Everyone</option><option>Men</option><option>Women</option></select></div>
-            <div class="filter-group"><div class="filter-label">Interests</div><div class="interest-tags" style="margin-top:5px;"><span class="i-tag selected" style="font-size:.72rem;padding:6px 11px;" onclick="toggleInterest(this)">🎵 Music</span><span class="i-tag" style="font-size:.72rem;padding:6px 11px;" onclick="toggleInterest(this)">✈️ Travel</span><span class="i-tag" style="font-size:.72rem;padding:6px 11px;" onclick="toggleInterest(this)">🏃 Fitness</span></div></div>
-            <button class="form-next-btn" style="margin-top:6px;padding:11px;">Apply Filters</button>
-          </div>
-        </div>
-      </div>
-      <div class="app-panel" id="panel-matches">
-        <div class="discover-header"><h2>My Matches 💘</h2><p>People who liked you back</p></div>
-        <div class="matches-grid" id="matches-grid"></div>
-      </div>
-      <div class="app-panel" id="panel-messages">
-        <div class="messages-layout">
-          <div class="convo-list">
-            <div class="convo-search"><input type="text" placeholder="🔍 Search conversations..."></div>
-            <div id="convo-list-items"></div>
-          </div>
-          <div class="chat-area">
-            <div class="chat-header">
-              <div class="chat-header-avatar"><img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&h=80&fit=crop&crop=face&auto=format" alt=""></div>
-              <div class="chat-header-info"><strong>Luna_28</strong><span>Online now</span></div>
-              <div class="chat-header-actions"><button class="chat-action-btn">📞</button><button class="chat-action-btn">📹</button><button class="chat-action-btn">⋮</button></div>
-            </div>
-            <div class="chat-messages" id="chat-messages"></div>
-            <div class="chat-input-area">
-              <button style="background:none;border:none;font-size:1.2rem;cursor:pointer;">😊</button>
-              <input class="chat-input" type="text" placeholder="Type a message..." id="chat-input-field" onkeydown="if(event.key==='Enter')sendMsg()">
-              <button class="chat-send-btn" onclick="sendMsg()">➤</button>
+          
+          <!-- Game Description Below the Player (Not in info panel) -->
+          <div class="game-description-container" id="gameDescriptionContainer">
+            <div class="game-description-box">
+              <h3>About This Game</h3>
+              <p id="currentGameDesc">Choose a game from below to start playing!</p>
+              <div class="game-instructions" id="gameInstructions">
+                <h4>How to Play</h4>
+                <ul id="gameInstructionsList">
+                  <li>Click the PLAY NOW button to start the game</li>
+                  <li>Use your keyboard or mouse to control the game</li>
+                  <li>Enjoy and have fun!</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="app-panel" id="panel-profile-view">
-        <div class="profile-view">
-          <div class="discover-header" style="margin-bottom:24px;"><h2>My Profile 👤</h2><p>This is how others see you</p></div>
-          <div class="profile-hero">
-            <div class="profile-big-img"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=450&h=564&fit=crop&crop=face&auto=format" alt="profile"></div>
-            <div class="profile-details">
-              <h2>Alex_Spark</h2><p class="age">28 years old · New York, USA</p>
-              <div class="profile-stats-row"><div class="p-stat"><strong>142</strong><span>Likes</span></div><div class="p-stat"><strong>12</strong><span>Matches</span></div><div class="p-stat"><strong>87%</strong><span>Match Rate</span></div></div>
-              <p class="profile-bio">Coffee lover, weekend hiker, and amateur chef. Looking for someone to explore the city with. Huge music fan — always at a live show somewhere 🎶</p>
-              <div style="margin-bottom:14px;display:flex;flex-wrap:wrap;gap:6px;"><span class="profile-tag">🎵 Music</span><span class="profile-tag">🏃 Fitness</span><span class="profile-tag">📚 Books</span><span class="profile-tag">☕ Coffee</span></div>
-              <div class="profile-action-btns"><button class="p-act-btn msg" onclick="showToast('✏️','Edit Profile','Coming soon!')">✏️ Edit Profile</button><button class="p-act-btn like" onclick="showToast('📤','Copied!','Profile link copied')">📤 Share</button></div>
-            </div>
+      </section>
+
+      <!-- Favorites Section (Hidden by default) -->
+      <section class="favorites-section" id="favoritesSection" style="display:none;">
+        <div class="section-header">
+          <h2>My Favorite Games</h2>
+          <button class="btn btn-text" id="backToAllBtn">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+            Back to All Games
+          </button>
+        </div>
+        <div class="games-grid" id="favoritesGrid">
+          <div class="empty-state" id="emptyFavorites">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            <h3>No Favorite Games Yet</h3>
+            <p>Click the heart icon on any game to add it to your favorites!</p>
           </div>
-          <div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;"><h3 style="font-size:.93rem;font-weight:700;margin-bottom:13px;">Photo Gallery</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;"><div style="aspect-ratio:1;border-radius:12px;overflow:hidden;"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&h=200&fit=crop&crop=face&auto=format" style="width:100%;height:100%;object-fit:cover;" alt=""></div><div style="aspect-ratio:1;border-radius:12px;overflow:hidden;"><img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&h=200&fit=crop&crop=face&auto=format" style="width:100%;height:100%;object-fit:cover;" alt=""></div><div style="aspect-ratio:1;border-radius:12px;overflow:hidden;"><img src="https://images.unsplash.com/photo-1488716820095-cbe80883c496?w=200&h=200&fit=crop&crop=face&auto=format" style="width:100%;height:100%;object-fit:cover;" alt=""></div></div></div>
         </div>
-      </div>
-      <div class="app-panel" id="panel-settings">
-        <div class="settings-wrap">
-          <div class="discover-header"><h2>Settings ⚙️</h2><p>Manage your account and preferences</p></div>
-          <div class="settings-section"><h3>Account</h3><div class="settings-row"><div class="settings-row-label"><strong>Email</strong><span>demo@sparkconnect.com</span></div><button style="background:none;border:none;color:var(--accent);cursor:pointer;font-weight:700;font-size:.86rem;">Change</button></div><div class="settings-row"><div class="settings-row-label"><strong>Password</strong><span>Last changed 30 days ago</span></div><button style="background:none;border:none;color:var(--accent);cursor:pointer;font-weight:700;font-size:.86rem;">Update</button></div></div>
-          <div class="settings-section"><h3>Privacy</h3><div class="settings-row"><div class="settings-row-label"><strong>Incognito Mode</strong><span>Hide profile from non-matches</span></div><label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-thumb"></span></label></div><div class="settings-row"><div class="settings-row-label"><strong>Show Online Status</strong><span>Let matches see when you're active</span></div><label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span><span class="toggle-thumb"></span></label></div><div class="settings-row"><div class="settings-row-label"><strong>Read Receipts</strong><span>Show when you've read messages</span></div><label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span><span class="toggle-thumb"></span></label></div></div>
-          <div class="settings-section"><h3>Notifications</h3><div class="settings-row"><div class="settings-row-label"><strong>New Match</strong><span>Notify when someone likes you back</span></div><label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span><span class="toggle-thumb"></span></label></div><div class="settings-row"><div class="settings-row-label"><strong>New Message</strong><span>Push notification for new messages</span></div><label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span><span class="toggle-thumb"></span></label></div><div class="settings-row"><div class="settings-row-label"><strong>Email Updates</strong><span>Weekly digest of your activity</span></div><label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-thumb"></span></label></div></div>
-          <div class="settings-section"><h3>Membership</h3><div style="background:linear-gradient(135deg,var(--accentlt),#f0f0ff);border:1.5px solid var(--accentmd);border-radius:var(--radius);padding:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:13px;"><div><strong style="font-size:1.02rem;">Free Plan</strong><p style="color:var(--muted);font-size:.82rem;margin-top:3px;">Upgrade to unlock unlimited likes & more.</p></div><button class="btn-primary" onclick="showToast('👑','SparkConnect Gold','Unlock unlimited features!')">Upgrade 👑</button></div></div>
+      </section>
+
+      <!-- Games Grid -->
+      <section class="games-section" id="gamesSection">
+        <div class="section-header">
+          <h2 id="categoryTitle">All Games</h2>
+          <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="mobile">Mobile</button>
+            <button class="filter-btn" data-filter="desktop">Desktop</button>
+          </div>
         </div>
-      </div>
+
+        <!-- Loading skeletons shown initially -->
+        <div class="games-grid" id="gamesGrid">
+          <div class="loading-skeleton"></div>
+          <div class="loading-skeleton"></div>
+          <div class="loading-skeleton"></div>
+          <div class="loading-skeleton"></div>
+          <div class="loading-skeleton"></div>
+          <div class="loading-skeleton"></div>
+          <div class="loading-skeleton"></div>
+          <div class="loading-skeleton"></div>
+        </div>
+      </section>
     </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-left">
+          <span>© 2024 X7ero Games. All rights reserved. | OMN</span>
+        </div>
+        <div class="footer-right">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">About</a>
+          <a href="mailto:boukouch@example.com?subject=Contact%20from%20X7ero%20Games%20-%20OMN&body=Hello%2C%0A%0AI%20am%20contacting%20you%20from%20X7ero%20Games%20website.">Contact</a>
+        </div>
+      </div>
+    </footer>
   </div>
-</div>
 
-<div class="toast" id="toast"><div class="toast-icon" id="toast-icon">✅</div><div class="toast-text"><strong id="toast-title">Done</strong><span id="toast-msg">Action completed</span></div></div>
-
-<div class="match-popup-overlay" id="match-popup">
-  <div class="match-popup">
-    <span class="pop-emoji">🎉</span>
-    <h2>It's a <span>Match!</span></h2>
-    <p>You and <strong id="match-name">Luna_28</strong> liked each other!</p>
-    <div class="match-popup-avatars"><div class="pop-avatar"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=136&h=136&fit=crop&crop=face&auto=format" alt="me"></div><div class="heart-between">❤️</div><div class="pop-avatar"><img id="match-popup-img" src="" alt="match"></div></div>
-    <div class="match-popup-btns"><button class="btn-primary" onclick="closeMatchPopup();showPanel('messages')">Send a Message 💬</button><button class="btn-ghost" onclick="closeMatchPopup()">Keep Swiping 🔥</button></div>
-  </div>
-</div>
-
-<script>
-const PROFILES=[
-  {photo:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&h=530&fit=crop&crop=face&auto=format',name:'Luna_28',age:28,city:'Paris',tags:['🎵 Music','✈️ Travel','🍷 Wine']},
-  {photo:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=530&fit=crop&crop=face&auto=format',name:'Marco_30',age:30,city:'Barcelona',tags:['🏃 Fitness','🎮 Gaming','☕ Coffee']},
-  {photo:'https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?w=400&h=530&fit=crop&crop=face&auto=format',name:'Zara_25',age:25,city:'London',tags:['📚 Books','🎨 Art','🐶 Pets']},
-  {photo:'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&h=530&fit=crop&crop=face&auto=format',name:'Mia_27',age:27,city:'Berlin',tags:['🌿 Nature','🎵 Music','🏃 Fitness']},
-  {photo:'https://images.unsplash.com/photo-1488716820095-cbe80883c496?w=400&h=530&fit=crop&crop=face&auto=format',name:'Sofia_26',age:26,city:'Milan',tags:['🎬 Movies','🍕 Foodie','✈️ Travel']},
-  {photo:'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&h=530&fit=crop&crop=face&auto=format',name:'Emma_24',age:24,city:'Amsterdam',tags:['📚 Books','☕ Coffee','🎨 Art']},
-  {photo:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=530&fit=crop&crop=face&auto=format',name:'Jake_33',age:33,city:'New York',tags:['🎮 Gaming','🍕 Foodie','🎬 Movies']},
-  {photo:'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=400&h=530&fit=crop&crop=face&auto=format',name:'Leo_35',age:35,city:'Madrid',tags:['🏃 Fitness','☕ Coffee','🌿 Nature']},
-];
-const CONVOS=[
-  {photo:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=88&h=88&fit=crop&crop=face&auto=format',name:'Luna_28',last:'Hey! Are you free Saturday?',time:'2m',online:true},
-  {photo:'https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?w=88&h=88&fit=crop&crop=face&auto=format',name:'Zara_25',last:'Loved your playlist 🎵',time:'1h',online:true},
-  {photo:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=88&h=88&fit=crop&crop=face&auto=format',name:'Marco_30',last:'That hike sounds amazing!',time:'3h',online:false},
-  {photo:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=88&h=88&fit=crop&crop=face&auto=format',name:'Jake_33',last:'We should grab coffee ☕',time:'1d',online:false},
-];
-const MESSAGES=[
-  {me:false,text:'Hey! I saw you like music too 🎵',time:'10:30 AM',photo:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=60&h=60&fit=crop&crop=face&auto=format'},
-  {me:true,text:'Yes! Huge fan. What are your favourite genres?',time:'10:32 AM',photo:'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=60&h=60&fit=crop&crop=face&auto=format'},
-  {me:false,text:'Mostly indie and jazz. You?',time:'10:33 AM',photo:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=60&h=60&fit=crop&crop=face&auto=format'},
-  {me:true,text:'Same! Have you been to any live shows lately?',time:'10:35 AM',photo:'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=60&h=60&fit=crop&crop=face&auto=format'},
-  {me:false,text:'I went to a jazz night last week, it was incredible 😍',time:'10:36 AM',photo:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=60&h=60&fit=crop&crop=face&auto=format'},
-  {me:true,text:'No way! We should go together sometime!',time:'10:38 AM',photo:'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=60&h=60&fit=crop&crop=face&auto=format'},
-  {me:false,text:'I would really like that 😊',time:'10:40 AM',photo:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=60&h=60&fit=crop&crop=face&auto=format'},
-];
-let swipeIndex=0;
-const photoData={1:null,2:null,3:null};
-function init(){renderHomeProfiles();renderSwipeDeck();renderMatches();renderConvos();renderMessages();}
-function renderHomeProfiles(){const g=document.getElementById('home-profiles');PROFILES.slice(0,6).forEach(p=>{g.innerHTML+=`<div class="profile-card" onclick="showPage('register')"><div class="profile-img"><img src="${p.photo}" alt="${p.name}" loading="lazy"><div class="profile-online"></div></div><div class="profile-info"><div class="profile-name">${p.name}</div><div class="profile-meta">📍 ${p.city} · ${p.age} yrs</div><span class="profile-tag">${p.tags[0]}</span></div></div>`;});}
-function renderSwipeDeck(){const d=document.getElementById('swipe-deck');d.innerHTML='';for(let i=Math.min(swipeIndex+2,PROFILES.length-1);i>=swipeIndex;i--){const p=PROFILES[i%PROFILES.length];d.innerHTML+=`<div class="swipe-card"><div class="card-img"><img src="${p.photo}" alt="${p.name}"><div class="card-gradient"></div></div><div class="card-body"><div class="card-name">${p.name}</div><div class="card-age">${p.age} · ${p.city}</div><div class="card-tags">${p.tags.map(t=>`<span class="card-tag">${t}</span>`).join('')}</div></div></div>`;}}
-function renderMatches(){const g=document.getElementById('matches-grid');PROFILES.forEach(p=>{g.innerHTML+=`<div class="match-card"><div class="match-img"><img src="${p.photo}" alt="${p.name}" loading="lazy"><span class="match-badge">❤️ Match</span></div><div class="match-info"><div class="match-name">${p.name}</div><div class="match-sub">📍 ${p.city} · ${p.age} yrs</div><div class="match-actions"><button class="match-act-btn msg" onclick="showPanel('messages')">💬 Message</button><button class="match-act-btn profile">👤 View</button></div></div></div>`;});}
-function renderConvos(){const l=document.getElementById('convo-list-items');CONVOS.forEach((c,i)=>{l.innerHTML+=`<div class="convo-item ${i===0?'active':''}" onclick="selectConvo(this)"><div class="convo-avatar"><img src="${c.photo}" alt="${c.name}">${c.online?'<div class="convo-online"></div>':''}</div><div class="convo-info"><div class="convo-name">${c.name}</div><div class="convo-preview">${c.last}</div></div><div class="convo-time">${c.time}</div></div>`;});}
-function renderMessages(){const b=document.getElementById('chat-messages');b.innerHTML='';MESSAGES.forEach(m=>{b.innerHTML+=`<div class="msg ${m.me?'me':''}"><div class="msg-avatar"><img src="${m.photo}" alt=""></div><div><div class="msg-bubble">${m.text}</div><div class="msg-time">${m.time}</div></div></div>`;});b.scrollTop=b.scrollHeight;}
-function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById('page-'+p).classList.add('active');window.scrollTo(0,0);if(p==='app'){document.getElementById('nav-links').innerHTML=`<button class="nav-btn outline" onclick="showPanel('messages')">💬 Messages</button><button class="nav-btn solid" onclick="showPanel('discover')">🔥 Discover</button>`;}else{document.getElementById('nav-links').innerHTML=`<button class="nav-btn solid" onclick="window.open('https://t.crdtg2.com/401940/5611?bo=2753,2754,2755,2756&aff_sub5=SF_006OG000004lmDN', '_blank')">Join Free</button>`;}}
-function showPanel(p){document.querySelectorAll('.app-panel').forEach(x=>x.classList.remove('active'));document.getElementById('panel-'+p).classList.add('active');document.querySelectorAll('.sidebar-item').forEach(x=>x.classList.remove('active'));const map={discover:0,matches:1,messages:2,'profile-view':3,settings:4};const items=document.querySelectorAll('.sidebar-item');if(map[p]!==undefined)items[map[p]].classList.add('active');if(p==='messages')setTimeout(()=>{const b=document.getElementById('chat-messages');b.scrollTop=b.scrollHeight;},100);}
-function setFieldError(inputId,errId,show){const input=document.getElementById(inputId);const err=document.getElementById(errId);if(!input||!err)return;if(show){input.classList.add('error');err.classList.add('show');}else{input.classList.remove('error');err.classList.remove('show');}}
-function setError(errId,show){const err=document.getElementById(errId);if(err)err.classList[show?'add':'remove']('show');}
-function validateStep1(){let valid=true;const email=document.getElementById('reg-email').value.trim();const emailOk=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);setFieldError('reg-email','err-email',!emailOk);if(!emailOk)valid=false;const username=document.getElementById('reg-username').value.trim();setFieldError('reg-username','err-username',username.length<3);if(username.length<3)valid=false;const password=document.getElementById('reg-password').value;setFieldError('reg-password','err-password',password.length<8);if(password.length<8)valid=false;const dob=document.getElementById('reg-dob').value;let dobOk=false;if(dob){const age=Math.floor((Date.now()-new Date(dob))/(365.25*24*60*60*1000));dobOk=age>=18;}setFieldError('reg-dob','err-dob',!dobOk);if(!dobOk)valid=false;if(valid)nextStep(2);}
-function validateStep2(){let valid=true;const loc=document.getElementById('reg-location').value.trim();setFieldError('reg-location','err-location',loc.length<2);if(loc.length<2)valid=false;const selected=document.querySelectorAll('#interest-tags-group .i-tag.selected').length;setError('err-interests',selected<3);if(selected<3)valid=false;if(valid)nextStep(3);}
-function validateStep3(){let valid=true;const bio=document.getElementById('reg-bio').value.trim();setFieldError('reg-bio','err-bio',bio.length<20);if(bio.length<20)valid=false;const hasPhoto=photoData[1]||photoData[2]||photoData[3];setError('err-photos',!hasPhoto);if(!hasPhoto)valid=false;if(valid)completeRegister();}
-function nextStep(n){document.querySelector('.step-form.active').classList.remove('active');document.getElementById('step-'+n).classList.add('active');document.getElementById('dot-'+(n-1)).classList.remove('active');document.getElementById('dot-'+(n-1)).classList.add('done');document.getElementById('line-'+(n-1)).classList.add('done');document.getElementById('dot-'+n).classList.add('active');window.scrollTo(0,0);}
-function completeRegister(){showPage('login');document.getElementById('verify-banner').style.display='flex';showToast('📧','Account created!','Check your email to verify your account.');}
-function doLogin(){document.getElementById('verify-banner').style.display='none';showPage('app');showToast('👋','Welcome back!','4 new messages & 12 matches!');}
-function handleFileSelect(slotNum,input){if(!input.files||!input.files[0])return;const file=input.files[0];if(!file.type.startsWith('image/')){showToast('⚠️','Invalid file','Please select an image file.');return;}if(file.size>10*1024*1024){showToast('⚠️','File too large','Max size is 10MB.');return;}const url=URL.createObjectURL(file);if(photoData[slotNum])URL.revokeObjectURL(photoData[slotNum]);photoData[slotNum]=url;const slot=document.getElementById('slot-'+slotNum);slot.classList.add('filled');slot.innerHTML=`<img src="${url}" alt="Photo ${slotNum}"><button class="remove-btn" onclick="removePhoto(event,${slotNum})">✕</button>`;input.value='';setError('err-photos',false);}
-function removePhoto(event,slotNum){event.stopPropagation();if(photoData[slotNum]){URL.revokeObjectURL(photoData[slotNum]);photoData[slotNum]=null;}const slot=document.getElementById('slot-'+slotNum);slot.classList.remove('filled');slot.innerHTML=`<span>+ Photo ${slotNum}</span><button class="remove-btn" onclick="removePhoto(event,${slotNum})">✕</button>`;slot.onclick=()=>document.getElementById('file-'+slotNum).click();}
-function swipeLike(){const c=document.querySelector('#swipe-deck .swipe-card');if(!c)return;c.style.transform='translateX(200%) rotate(20deg)';c.style.opacity='0';const p=PROFILES[swipeIndex%PROFILES.length];swipeIndex++;setTimeout(()=>{if(Math.random()>.5)showMatchPopup(p);else renderSwipeDeck();},400);}
-function swipePass(){const c=document.querySelector('#swipe-deck .swipe-card');if(!c)return;c.style.transform='translateX(-200%) rotate(-20deg)';c.style.opacity='0';swipeIndex++;setTimeout(()=>renderSwipeDeck(),400);}
-function swipeSuper(){const c=document.querySelector('#swipe-deck .swipe-card');if(!c)return;c.style.transform='translateY(-200%)';c.style.opacity='0';const p=PROFILES[swipeIndex%PROFILES.length];swipeIndex++;setTimeout(()=>showMatchPopup(p),400);}
-function showMatchPopup(p){document.getElementById('match-name').textContent=p.name;document.getElementById('match-popup-img').src=p.photo;document.getElementById('match-popup').classList.add('show');renderSwipeDeck();}
-function closeMatchPopup(){document.getElementById('match-popup').classList.remove('show');}
-function sendMsg(){const input=document.getElementById('chat-input-field');if(!input.value.trim())return;const b=document.getElementById('chat-messages');const now=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});b.innerHTML+=`<div class="msg me"><div class="msg-avatar"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=60&h=60&fit=crop&crop=face&auto=format" alt=""></div><div><div class="msg-bubble">${input.value}</div><div class="msg-time">${now}</div></div></div>`;input.value='';b.scrollTop=b.scrollHeight;setTimeout(()=>{const rs=['That sounds amazing! 😍','I totally agree!','Haha yes!! 😂','Tell me more...','We should meet up! ☕','You are so sweet 🥰'];b.innerHTML+=`<div class="msg"><div class="msg-avatar"><img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=60&h=60&fit=crop&crop=face&auto=format" alt=""></div><div><div class="msg-bubble">${rs[Math.floor(Math.random()*rs.length)]}</div><div class="msg-time">${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div></div></div>`;b.scrollTop=b.scrollHeight;},1100);}
-function selectConvo(el){document.querySelectorAll('.convo-item').forEach(x=>x.classList.remove('active'));el.classList.add('active');}
-function selectGenderGroup(groupId,btn){document.getElementById(groupId).querySelectorAll('.gender-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');}
-function toggleInterest(el){el.classList.toggle('selected');}
-function showToast(icon,title,msg){const t=document.getElementById('toast');document.getElementById('toast-icon').textContent=icon;document.getElementById('toast-title').textContent=title;document.getElementById('toast-msg').textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
-init();
-</script>
+  <script src="script.js"></script>
 </body>
 </html>
